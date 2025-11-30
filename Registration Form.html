@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<style>
+    body {
+        margin: 0;
+        font-family: "Tajawal", sans-serif;
+        background: linear-gradient(135deg, #4f46e5, #4338ca);
+    }
+
+    .container {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card {
+        width: 360px;
+        padding: 25px 30px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        animation: fadeIn .4s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(25px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .input-group { margin-bottom: 18px; }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 15px;
+        color: #333;
+    }
+
+    input {
+        width: 100%;
+        padding: 6px;
+        border-radius: 10px;
+        border: 2px solid #ccc;
+        outline: none;
+        font-size: 15px;
+        transition: .25s;
+    }
+
+    input:focus { border-color: #4f46e5; }
+
+    .error {
+        height: 16px;
+        font-size: 13px;
+        margin-top: 5px;
+        color: red;
+    }
+
+    .valid { border-color: #22c55e !important; }
+    .invalid { border-color: #ef4444 !important; }
+
+    .btn {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        background: #4f46e5;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 30px;
+        cursor: pointer;
+        transition: .25s;
+    }
+
+    .btn:hover { background: #332fda; }
+
+    .password-box {
+    position: relative;
+}
+
+.password-box input {
+    width: 100%;
+    padding-right: 6px; 
+}
+
+.togglePass {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555;
+}
+
+</style>
+<body>
+    <div class="container">
+        <form id="registerForm" class="card">
+            <h2>إنشاء حساب</h2>
+
+            <div class="input-group">
+                <label><i class="fa-solid fa-user"></i> الاسم</label>
+                <input type="text" id="name" placeholder="Full Name" required>
+                <p class="error" id="nameError"></p>
+            </div>
+
+            <div class="input-group">
+                <label><i class="fa-solid fa-envelope"></i> البريد الإلكتروني</label>
+                <input type="text" id="email" placeholder="Email Address" required>
+                <p class="error" id="emailError"></p>
+            </div>
+
+<div class="input-group password-group">
+    <label><i class="fa-solid fa-lock"></i> كلمة السر</label>
+    <div class="password-box">
+        <input type="password" id="password" placeholder="Password" required>
+        <i class="fa-solid fa-eye togglePass" onclick="togglePassword('password', this)"></i>
+    </div>
+    <p class="error" id="passwordError"></p>
+</div>
+
+
+<div class="input-group password-group">
+    <label><i class="fa-solid fa-check-double"></i> تأكيد كلمة السر</label>
+    <div class="password-box">
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+        <i class="fa-solid fa-eye togglePass" onclick="togglePassword('confirmPassword', this)"></i>
+    </div>
+    <p class="error" id="confirmPasswordError"></p>
+</div>
+
+            <button type="submit" class="btn">تسجيل</button>
+        </form>
+    </div>
+
+
+
+<script>
+
+// دالة بسيطة لعرض رسالة الخطأ وتغيير شكل الحقل
+function setFieldState(input, errorElement, message) {
+    if (message) {
+        errorElement.textContent = message;
+        input.classList.add("invalid");
+        input.classList.remove("valid");
+        return false;
+    } else {
+        errorElement.textContent = "";
+        input.classList.remove("invalid");
+        input.classList.add("valid");
+        return true;
+    }
+}
+
+// التحقق من الاسم
+function checkName() {
+    const field = document.getElementById("name");
+    const err = document.getElementById("nameError");
+
+    if (field.value.trim().length < 3)
+        return setFieldState(field, err, "الاسم يجب أن يكون 3 أحرف على الأقل");
+
+    return setFieldState(field, err, "");
+}
+
+// التحقق من البريد
+function checkEmail() {
+    const field = document.getElementById("email");
+    const err = document.getElementById("emailError");
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!regex.test(field.value.trim()))
+        return setFieldState(field, err, "بريد إلكتروني غير صالح");
+
+    return setFieldState(field, err, "");
+}
+
+// التحقق من كلمة المرور
+function checkPassword() {
+    const field = document.getElementById("password");
+    const err = document.getElementById("passwordError");
+
+    if (field.value.length < 6)
+        return setFieldState(field, err, "كلمة السر يجب أن تكون 6 أحرف على الأقل");
+
+    return setFieldState(field, err, "");
+}
+
+// التحقق من تأكيد كلمة السر
+function checkConfirm() {
+    const pass = document.getElementById("password");
+    const confirm = document.getElementById("confirmPassword");
+    const err = document.getElementById("confirmPasswordError");
+
+    if (confirm.value !== pass.value)
+        return setFieldState(confirm, err, "كلمة السر غير متطابقة");
+
+    return setFieldState(confirm, err, "");
+}
+
+function togglePassword(id, icon) {
+    const input = document.getElementById(id);
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    }
+}
+
+
+// تفعيل الفاليديشن أثناء الكتابة
+["name", "email", "password", "confirmPassword"].forEach(id => {
+    document.getElementById(id).addEventListener("input", () => {
+        if (id === "name") checkName();
+        if (id === "email") checkEmail();
+        if (id === "password") checkPassword();
+        if (id === "confirmPassword") checkConfirm();
+    });
+});
+
+// التحقق النهائي قبل الإرسال
+document.getElementById("registerForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const valid =
+        checkName() &&
+        checkEmail() &&
+        checkPassword() &&
+        checkConfirm();
+
+    if (valid) {
+        alert("✔ تم إنشاء الحساب بنجاح!");
+    }
+});
+
+</script>
+
+</body>
+</html>
